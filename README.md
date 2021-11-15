@@ -16,9 +16,9 @@ A first prototype that fulfills these requirements was created and is available 
 
 ### Usage Instructions
 
-##### Importing The Template to Visual Studio
+#### Importing The Template to Visual Studio
 
-To use the template, copy the zip file from the [GitHub repo](https://github.com/securifybv/Visual-Studio-BOF-template) into the project templates directory under My Documents. For Visual Studio 2019, the directory would be 
+To use the template, download and copy the latest zip file from the [releases page](https://github.com/securifybv/Visual-Studio-BOF-template/releases) into the project templates directory under My Documents. For Visual Studio 2019, the directory would be 
 
 %UserProfile%\Documents\Visual Studio 2019\Templates\ProjectTemplates 
 
@@ -30,13 +30,11 @@ The template will be automatically loaded into Visual Studio the next time you r
 
 
 
-
-
 ![](images/NewProjectWizard.png)
 
 
 
-##### Default Structure
+#### Default Structure
 
 The structure of the solution is shown in the image below. The *Header Files* filter contains the two headers needed to develop BOFs. The first header is the beacon header provided by the Cobalt Strike team. The bofdefs header is a modified version of the bofdefs header from TrustedSec. Next, the *Resources* filter contains a PowerShell script that will strip the debugging symbols. This PowerShell script is based on the work of Matthew Graeber (@mattifestation) on his ObjDump script. Finally, the *Source Files* filter contains the source code of the BOF.
 
@@ -44,7 +42,7 @@ The structure of the solution is shown in the image below. The *Header Files* fi
 
 
 
-##### Using The Template
+#### Using The Template
 
 The template makes it as easy as copying the *main* code to the *go* function for BOFs that take no arguments. The image below shows that the code in *go* is identical to the code in *main*. The ability to reuse the code without further modification increases the efficiency of porting existing projects into BOFs and eliminates the unnatural syntax of dynamic function resolution. For BOFs that take arguments, only the argument parsing part will be different. A goal for next versions is to create generic argument parsing macros or functions to eliminate the need for any modification.
 
@@ -66,11 +64,11 @@ Regardless of the method used to build the BOF, the result is a stripped BOF rea
 
 
 
-##### BOFs & COM Objects
+#### BOFs & COM Objects
 
 Sometimes, especially when dealing with component object model (COM) objects, it is easier to use C++ instead of C. The template supports that as well. Simply rename the Source.c to Source.cpp and compile. You will be spared from name mangling because the template will automatically add *extern “C”* if C++ is used. However, you should not get your hopes up too high with developing C++ BOFs, as this is not yet fully supported by Cobalt Strike.
 
-##### Error Reporting
+#### Error Reporting
 
 The template comes with a built-in function to print errors in a meaningful manner for operators. The purpose is to provide the operators with sufficient information to understand why the BOF failed without revisiting the source code. The error message below is a screenshot from the Cobalt Strike console and provides the following information for the operators: the error occurred 
 
@@ -81,7 +79,7 @@ The template comes with a built-in function to print errors in a meaningful mann
 
 ![](images/errors.png)
 
-##### Modifying the template
+#### Modifying the template
 
 Different teams have different needs, and therefore this template might not be suitable for everyone. Modifying the template is easy. Just unzip the zip file, make your modifications to the files, and zip it again!
 
