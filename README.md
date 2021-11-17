@@ -1,6 +1,18 @@
-### Background
+### Introduction
 
-The background behind the creation of this template and its requirement can be found in the accompanying blog post on [Securify's blog](https://www.securify.nl/en/blog/creating-cobalt-strike-bofs-with-visual-studio).
+Cobalt Strike beacon object files (BOFs) is a feature that added to the beacon in order to allow rapid beacon extendibility in a more OPSEC way. The BOF file is a COFF object file that will be executed in the same process as the beacon and therefore eliminates the need for using OPSEC expensive techniques like fork&run. BOFs are written in C\C++ and can be built using Visual Studio or MinGW. The official documentation on BOFs can be found [here](https://www.cobaltstrike.com/help-beacon-object-files). TrustedSec provided a well-written [introduction to BOFs for developers](https://www.trustedsec.com/blog/a-developers-introduction-to-beacon-object-files/), and also provided an [example COFF loader](https://www.trustedsec.com/blog/coffloader-building-your-own-in-memory-loader-or-how-to-run-bofs/) for those interested in learning more about how BOFs work under the hood. 
+
+Developing Windows applications in Visual Studio has its advantages, mainly the ease of building, debugging, and testing as well as the integration of testing tools like virtual leak detector, application verifier, cppcheck, and so on. However, creating BOFs with Visual Studio is unpleasant because of the syntax of dynamic function resolution and because additional steps must be taken to generate the BOF and strip its debug symbols. Additionally, sometimes BOFs fail in engagements, and it would be handy to know the cause of the failure in production. 
+
+I wanted to create a baseline template that can be reused to develop BOFs with Visual Studio without having to worry about dynamic function resolution syntax, stripping symbols, compiler configurations, C++ name mangling, or unexpected runtime errors. Thus, the requirements were
+
+1. Default debug and release build configurations for debugging and testing for aspects like memory or handle leaks
+1. Custom BOF build configuration that will generate the BOFs, strip their debug symbols, and move them to an output directory
+1. Prebuilt list of function definitions to allow developers to reuse existing code without having to add the dynamic function resolution syntax
+1. Built-in error function that will print, in production, which line and function caused the error
+1. Ability to write simple C++ code without having to worry about name mangling
+
+A first prototype that fulfills these requirements was created and is available on GitHub.
 
 ### Usage Instructions
 
